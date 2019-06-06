@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+    <RadioGroup
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_margin="16dp"
+            android:layout_width="match_parent"
+            android:id="@+id/radiogroup_mainactivity_method"
+            android:layout_height="wrap_content">
+        <RadioButton
+                android:text="Asymmetric"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/radiobutton_mainactivity_asymmetric"
+                android:layout_weight="1"/>
+        <RadioButton
+                android:text="Symmetric"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/radiobutton_mainactivity_symmetric"
+                android:layout_weight="1"/>
+        <RadioButton
+                android:text="PBKDF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/radiobutton_mainactivity_pbkdf"
+                android:layout_weight="1"/>
+    </RadioGroup>
+
+    <RelativeLayout android:id="@+id/relativelayout_mainactivity_specs" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/radiogroup_mainactivity_method">
+
+        <EditText
+                android:layout_margin="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="User Pin"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/edittext_mainactivity_pin"/>
+
+        <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:hint="Key Alias"
+                  android:layout_margin="16dp"
+                  android:layout_alignParentStart="true"
+                  android:layout_below="@id/edittext_mainactivity_pin"
+                  android:layout_toStartOf="@id/button_mainactivity_generatekey"
+                  android:id="@+id/edittext_mainactivity_keyalias"/>
+
+        <Button android:id="@+id/button_mainactivity_generatekey" android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignBaseline="@id/edittext_mainactivity_keyalias"
+                android:layout_margin="16dp"
+                android:text="Generate Key"/>
+
+        <EditText android:id="@+id/edittext_mainactivity_plaintext" android:layout_width="match_parent"
+                  android:hint="Plain Text"
+                  android:layout_margin="16dp"
+                  android:layout_toStartOf="@id/button_mainactivity_encrypt"
+                  android:layout_below="@id/edittext_mainactivity_keyalias"
+                  android:layout_alignParentStart="true"
+                  android:layout_height="wrap_content"/>
+
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/button_mainactivity_encrypt"
+                android:layout_alignBaseline="@+id/edittext_mainactivity_plaintext"
+                android:text="Encrypt"/>
+
+
+        <EditText android:id="@+id/edittext_mainactivity_ciphertext" android:layout_width="match_parent"
+                  android:hint="Cipher Text"
+                  android:layout_margin="16dp"
+                  android:layout_alignParentStart="true"
+                  android:layout_toStartOf="@id/button_mainactivity_decrypt"
+                  android:layout_below="@id/edittext_mainactivity_plaintext"
+                  android:layout_height="wrap_content"/>
+
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/button_mainactivity_decrypt"
+                android:layout_alignBaseline="@+id/edittext_mainactivity_ciphertext"
+                android:text="Decrypt"/>
+
+        <TextView
+                android:id="@+id/textview_mainactivity_result"
+                android:text="TextView"
+                android:layout_margin="16dp"
+                android:textIsSelectable="true"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
