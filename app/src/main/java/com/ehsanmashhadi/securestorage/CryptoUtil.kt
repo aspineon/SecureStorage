@@ -1,8 +1,14 @@
 package com.ehsanmashhadi.securestorage
 
+import java.nio.charset.Charset
 import java.security.Key
+import java.security.KeyFactory
 import java.security.SecureRandom
 import javax.crypto.Cipher
+import javax.crypto.SecretKey
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
+import javax.crypto.spec.SecretKeySpec
 
 
 class CryptoUtil {
@@ -31,6 +37,17 @@ class CryptoUtil {
             cipher.init(Cipher.DECRYPT_MODE, key)
             val plainText = cipher.doFinal(cipherText)
             return plainText
+        }
+
+        fun derivateKey(pin: ByteArray, salt: ByteArray, pbeAlgorithm:String, encryptionAlgorithm:String,
+                        iterationNo:Int, keySize:Int): SecretKey{
+
+            val factory = SecretKeyFactory.getInstance(pbeAlgorithm)
+            val pinCharArray = String(pin, Charset.forName("UTF-8")).toCharArray()
+            val spec = PBEKeySpec(pinCharArray, salt, iterationNo, keySize)
+            val secret = factory.generateSecret(spec)
+            val secretKey = SecretKeySpec(secret.encoded,encryptionAlgorithm)
+            return secretKey
         }
     }
 }

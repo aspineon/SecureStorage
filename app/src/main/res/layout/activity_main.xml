@@ -3,7 +3,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-
     <RadioGroup
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
@@ -98,6 +97,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:id="@+id/relativelayout_mainactivity_notsupport"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="match_parent">
+
+        <TextView
+                android:text="Not Supported"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_height="wrap_content" android:id="@+id/textview_mainactivity_notsupport"/>
     </RelativeLayout>
 
 

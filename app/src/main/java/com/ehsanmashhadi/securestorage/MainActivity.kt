@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mRadioButtonSymmetric: RadioButton
     private lateinit var mRadioButtonPbkdf: RadioButton
     private lateinit var mRelativeLayoutSpecs: RelativeLayout
+    private lateinit var mRelativeLayoutNotSupported: RelativeLayout
     private lateinit var mEditTextPin: EditText
     private lateinit var mEditTextKeyAlias: EditText
     private lateinit var mEditTextPlainText: EditText
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         initUiComponents()
         initListeners()
+        mRadioButtonAsymmetric.isChecked = true
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
     }
 
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         mRadioButtonSymmetric = findViewById(R.id.radiobutton_mainactivity_symmetric)
         mRadioButtonPbkdf = findViewById(R.id.radiobutton_mainactivity_pbkdf)
         mRelativeLayoutSpecs = findViewById(R.id.relativelayout_mainactivity_specs)
+        mRelativeLayoutNotSupported = findViewById(R.id.relativelayout_mainactivity_notsupport)
         mEditTextPin = findViewById(R.id.edittext_mainactivity_pin)
         mEditTextKeyAlias = findViewById(R.id.edittext_mainactivity_keyalias)
         mEditTextPlainText = findViewById(R.id.edittext_mainactivity_plaintext)
@@ -67,27 +70,36 @@ class MainActivity : AppCompatActivity() {
 
         mRadioGroupMethod.setOnCheckedChangeListener { _, checkedId ->
 
-            KeyStoreUtil.deleteEntries()
-
             when (checkedId) {
 
                 R.id.radiobutton_mainactivity_asymmetric -> {
                     mEditTextPin.visibility = View.GONE
-                    if (Build.VERSION.SDK_INT < 18) {
+                    if (!KeyStoreUtil.keyStoreAsymmetricAvailable()) {
                         mRelativeLayoutSpecs.visibility = View.GONE
+                        mRelativeLayoutNotSupported.visibility = View.VISIBLE
+                    } else {
+                        mRelativeLayoutSpecs.visibility = View.VISIBLE
+                        mRelativeLayoutNotSupported.visibility = View.GONE
+                        KeyStoreUtil.deleteEntries()
                     }
                 }
 
                 R.id.radiobutton_mainactivity_symmetric -> {
                     mEditTextPin.visibility = View.GONE
-                    if (Build.VERSION.SDK_INT < 23) {
+                    if (!KeyStoreUtil.keyStoreSymmetricAvailable()) {
                         mRelativeLayoutSpecs.visibility = View.GONE
+                        mRelativeLayoutNotSupported.visibility = View.VISIBLE
+                    } else {
+                        mRelativeLayoutSpecs.visibility = View.VISIBLE
+                        mRelativeLayoutNotSupported.visibility = View.GONE
+                        KeyStoreUtil.deleteEntries()
                     }
                 }
 
                 R.id.radiobutton_mainactivity_pbkdf -> {
                     mEditTextPin.visibility = View.VISIBLE
                     mRelativeLayoutSpecs.visibility = View.VISIBLE
+                    mRelativeLayoutNotSupported.visibility = View.GONE
                 }
             }
         }
@@ -95,10 +107,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun generateKey() {
 
-        if (mRadioButtonSymmetric.isChecked && Build.VERSION.SDK_INT >= 23) {
+        if (mRadioButtonSymmetric.isChecked && KeyStoreUtil.keyStoreSymmetricAvailable()) {
 
             KeyStoreUtil.generateSymmetricKey(mEditTextKeyAlias.text.toString())
-        } else if (mRadioButtonAsymmetric.isChecked && Build.VERSION.SDK_INT >= 18) {
+        } else if (mRadioButtonAsymmetric.isChecked && KeyStoreUtil.keyStoreAsymmetricAvailable()) {
 
             val privateKey = KeyStoreUtil.generateAsymmetricKey(
                 applicationContext,
@@ -110,8 +122,14 @@ class MainActivity : AppCompatActivity() {
                 CryptoUtil.CIPHER_RSA,
                 randomKey, privateKey.certificate.publicKey
             )
-            mSharedPreference.edit().putString(SHARED_PREFERENCE_KEY, EncodingUtil.bytesToBase64(encryptedAesKey!!))
-                .commit()
+            val result =
+                mSharedPreference.edit().putString(SHARED_PREFERENCE_KEY, EncodingUtil.bytesToBase64(encryptedAesKey!!))
+                    .commit()
+
+            if (result)
+                Toast.makeText(this, "Key has saved", Toast.LENGTH_LONG).show()
+            else
+                Toast.makeText(this, "Key has not saved", Toast.LENGTH_LONG).show()
 
         } else if (mRadioButtonPbkdf.isChecked) {
             //PBKDF
@@ -161,6 +179,7 @@ class MainActivity : AppCompatActivity() {
                 (KeyStoreUtil.getKey(mEditTextKeyAlias.text.toString())!!)
             )
             mTextViewResult.text = if (plainText != null) String(plainText) else "NPE"
+
         } else if (mRadioButtonAsymmetric.isChecked) {
 
             val encryptedKey = EncodingUtil.base64ToBytes(

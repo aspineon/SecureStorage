@@ -20,11 +20,11 @@ class KeyStoreUtil {
     companion object {
 
         private const val AndroidKeyStore = "AndroidKeyStore"
-        private val keyStore = KeyStore.getInstance(AndroidKeyStore)
+        private lateinit var keyStore: KeyStore
 
         @RequiresApi(Build.VERSION_CODES.M)
         fun generateSymmetricKey(keyAlias: String): Key {
-
+            keyStore = KeyStore.getInstance(AndroidKeyStore)
             keyStore.load(null)
             if (!keyStore.containsAlias(keyAlias)) {
                 val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, AndroidKeyStore)
@@ -46,6 +46,7 @@ class KeyStoreUtil {
         @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
         fun generateAsymmetricKey(context: Context, keyAlias: String): KeyStore.Entry? {
 
+            keyStore = KeyStore.getInstance(AndroidKeyStore)
             keyStore.load(null)
             if (!keyStore.containsAlias(keyAlias)) {
                 val startDate = Calendar.getInstance()
@@ -66,6 +67,7 @@ class KeyStoreUtil {
 
         fun getKey(keyAlias: String): Key? {
 
+            keyStore = KeyStore.getInstance(AndroidKeyStore)
             keyStore.load(null)
             if (keyStore.containsAlias(keyAlias)) {
                 return keyStore.getKey(keyAlias, null)
@@ -75,6 +77,7 @@ class KeyStoreUtil {
 
         fun getKeyEntry(keyAlias: String): KeyStore.Entry? {
 
+            keyStore = KeyStore.getInstance(AndroidKeyStore)
             keyStore.load(null)
             if (keyStore.containsAlias(keyAlias)) {
                 return keyStore.getEntry(keyAlias, null)
@@ -83,10 +86,19 @@ class KeyStoreUtil {
         }
 
         fun deleteEntries() {
+            keyStore = KeyStore.getInstance(AndroidKeyStore)
             keyStore.load(null)
             for (alias in keyStore.aliases()) {
                 keyStore.deleteEntry(alias)
             }
+        }
+
+        fun keyStoreAsymmetricAvailable(): Boolean {
+            return Build.VERSION.SDK_INT >= 18
+        }
+
+        fun keyStoreSymmetricAvailable(): Boolean {
+            return Build.VERSION.SDK_INT >= 23
         }
     }
 }
