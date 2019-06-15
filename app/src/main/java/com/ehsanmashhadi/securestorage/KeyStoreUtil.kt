@@ -50,7 +50,7 @@ class KeyStoreUtil {
             keyStore.load(null)
             if (!keyStore.containsAlias(keyAlias)) {
                 val startDate = Calendar.getInstance()
-                var endDate = Calendar.getInstance()
+                val endDate = Calendar.getInstance()
                 endDate.add(Calendar.YEAR, 25)
                 val keyPairGeneratorSpec = KeyPairGeneratorSpec.Builder(context.applicationContext)
                     .setAlias(keyAlias).setSubject(X500Principal("CN=" + keyAlias))
@@ -85,20 +85,34 @@ class KeyStoreUtil {
             return null
         }
 
-        fun deleteEntries() {
-            keyStore = KeyStore.getInstance(AndroidKeyStore)
-            keyStore.load(null)
-            for (alias in keyStore.aliases()) {
-                keyStore.deleteEntry(alias)
-            }
-        }
-
         fun keyStoreAsymmetricAvailable(): Boolean {
             return Build.VERSION.SDK_INT >= 18
         }
 
         fun keyStoreSymmetricAvailable(): Boolean {
             return Build.VERSION.SDK_INT >= 23
+        }
+
+        fun getAsymmetricKeyAlias(): String? {
+            keyStore = KeyStore.getInstance(AndroidKeyStore)
+            keyStore.load(null)
+            for (alias in keyStore.aliases()) {
+                if (alias.startsWith("asymmetric_", true)) {
+                    return alias
+                }
+            }
+            return null
+        }
+
+        fun getSymmetricKeyAlias(): String? {
+            keyStore = KeyStore.getInstance(AndroidKeyStore)
+            keyStore.load(null)
+            for (alias in keyStore.aliases()) {
+                if (alias.startsWith("symmetric_", true)) {
+                    return alias
+                }
+            }
+            return null
         }
     }
 }

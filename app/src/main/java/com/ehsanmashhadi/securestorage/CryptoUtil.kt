@@ -2,7 +2,7 @@ package com.ehsanmashhadi.securestorage
 
 import java.nio.charset.Charset
 import java.security.Key
-import java.security.KeyFactory
+import java.security.MessageDigest
 import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
@@ -17,6 +17,10 @@ class CryptoUtil {
 
         const val CIPHER_AES = "AES/ECB/PKCS7Padding"
         const val CIPHER_RSA = "RSA/ECB/PKCS1Padding"
+        const val PBKDF2_HMAC_SHA1 = "PBKDF2WithHmacSHA1"
+        const val ENCRYPTION_ALGORITHM = "AES"
+        const val ROUND = 10000
+        const val LENGTH = 256
 
         fun generateSecureRandom(length: Int): ByteArray {
             val random = ByteArray(length)
@@ -39,15 +43,23 @@ class CryptoUtil {
             return plainText
         }
 
-        fun derivateKey(pin: ByteArray, salt: ByteArray, pbeAlgorithm:String, encryptionAlgorithm:String,
-                        iterationNo:Int, keySize:Int): SecretKey{
+        fun derivateKey(
+            pin: ByteArray, salt: ByteArray, pbeAlgorithm: String, encryptionAlgorithm: String,
+            iterationNo: Int, keySize: Int
+        ): SecretKey {
 
             val factory = SecretKeyFactory.getInstance(pbeAlgorithm)
             val pinCharArray = String(pin, Charset.forName("UTF-8")).toCharArray()
             val spec = PBEKeySpec(pinCharArray, salt, iterationNo, keySize)
             val secret = factory.generateSecret(spec)
-            val secretKey = SecretKeySpec(secret.encoded,encryptionAlgorithm)
+            val secretKey = SecretKeySpec(secret.encoded, encryptionAlgorithm)
             return secretKey
+        }
+
+        fun sha1(input: ByteArray): ByteArray {
+            val messageDigest = MessageDigest.getInstance("SHA-512")
+            messageDigest!!.update(input)
+            return messageDigest.digest()
         }
     }
 }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+    <EditText android:id="@+id/edittext_layout_plaintext" android:layout_width="match_parent"
+              android:hint="Plain Text"
+              android:layout_margin="16dp"
+              android:layout_toStartOf="@id/button_layout_encrypt"
+              android:layout_alignParentStart="true"
+              android:layout_alignParentTop="true"
+              android:layout_height="wrap_content"/>
+
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/button_layout_encrypt"
+            android:layout_alignBaseline="@+id/edittext_layout_plaintext"
+            android:text="Encrypt"/>
+
+
+    <EditText android:id="@+id/edittext_layout_ciphertext" android:layout_width="match_parent"
+              android:hint="Cipher Text"
+              android:layout_margin="16dp"
+              android:layout_alignParentStart="true"
+              android:layout_toStartOf="@id/button_layout_decrypt"
+              android:layout_below="@id/edittext_layout_plaintext"
+              android:layout_height="wrap_content"/>
+
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/button_layout_decrypt"
+            android:layout_alignBaseline="@+id/edittext_layout_ciphertext"
+            android:text="Decrypt"/>
+
+
+</RelativeLayout>
